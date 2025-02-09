@@ -1,0 +1,9 @@
+{
+    "name": "vladislav-mel/wor-map",
+    "autoload": {
+        "psr-4": {
+            "WorMap\\": "src/"
+        }
+    },
+    "require": {}
+}
