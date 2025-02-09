@@ -9,9 +9,16 @@ class Test
     {
         $user = User::findById(1);
 
-        $user->setLocation(2,2);
-        $user->setLocation(1,1);
-        $user->setLocation(1,2);
-        $user->setLocation(444,2);
+        try {
+            $user->setLocation(30, 40);
+        } catch (PointNotFoundException $e) {
+            echo $e->getMessage() . PHP_EOL;
+            exit();
+        } catch (\Throwable $e) {
+            echo 'Произошла ошибка: ' . PHP_EOL . $e->getMessage() . PHP_EOL;
+            exit();
+        }
+
+        echo 'Успех' . PHP_EOL;
     }
 }

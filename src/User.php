@@ -9,7 +9,8 @@ class User
 {
     public int $id;
     public string $username;
-    public int $password;
+    public string $password;
+    public int|null $point_id;
 
     public static function findById(int $id): static
     {
@@ -27,22 +28,15 @@ class User
 
     public function getLocation(): Point
     {
-        $stmt = App::$m->db->prepare('SELECT * FROM users_points WHERE user_id = ?');
-        $stmt->execute([$this->id]);
-
-        /** @var UserPoint $userPoint */
-        $userPoint = $stmt->fetchObject(UserPoint::class);
-
-        if (!$userPoint) {
-            throw new \DomainException('Не получили $userPoint');
-            // $this->setLocation(1, 1);
-        }
-
         $stmt = App::$m->db->prepare('SELECT * FROM points WHERE id = ?');
-        $stmt->execute([$userPoint->point_id]);
+        $stmt->execute([$this->point_id]);
 
         /** @var Point $point */
         $point = $stmt->fetchObject(Point::class);
+
+        if (!$point) {
+            throw new \DomainException('Юзер нигде не стоит');
+        }
 
         return  $point;
     }
@@ -55,21 +49,14 @@ class User
         $point = $stmt->fetchObject(Point::class);
 
         if (!$point) {
-            throw new \DomainException('Несуществующие координаты');
+            throw new PointNotFoundException('Несуществующие координаты');
         }
 
-        // А существует ли запись с таким юзером уже
-        $stmt = App::$m->db->prepare('SELECT * FROM users_points WHERE user_id = ?');
-        $stmt->execute([$this->id]);
-
-        /** @var UserPoint $userPoint */
-        $userPoint = $stmt->fetchObject(UserPoint::class);
-
-        if (!$userPoint) {
-            throw new \DomainException('Юзер нигде не стоит');
+        if ($point->active === 0) {
+            throw new \DomainException('На эту точку наступать нельзя');
         }
 
-        $stmt = App::$m->db->prepare('UPDATE users_points SET point_id = ? WHERE user_id = ?');
+        $stmt = App::$m->db->prepare('UPDATE users SET point_id = ? WHERE id = ?');
 
         if (!$stmt->execute([$point->id, $this->id])) {
             throw new \DomainException('Не получилось установить новую локацию юзера');
