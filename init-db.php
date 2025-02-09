@@ -2,7 +2,7 @@
 
 try {
     // Подключение к базе данных SQLite
-    $pdo = new PDO('sqlite:' . __DIR__ . '/database.db');
+    $pdo = new PDO('sqlite:' . __DIR__ . '/src/database.db');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Создание таблицы users
@@ -16,7 +16,8 @@ try {
     $pdo->exec("CREATE TABLE IF NOT EXISTS points (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         x INTEGER NOT NULL,
-        y INTEGER NOT NULL
+        y INTEGER NOT NULL,
+        active INTEGER NOT NULL
     )");
 
     // Создание таблицы users_points (связь пользователей с точками)
