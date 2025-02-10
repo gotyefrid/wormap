@@ -10,7 +10,9 @@ class User
     public int $id;
     public string $username;
     public string $password;
-    public int|null $point_id;
+    public ?int $point_id;
+
+    private ?Point $point;
 
     public static function findById(int $id): static
     {
@@ -26,41 +28,57 @@ class User
         return $user;
     }
 
-    public function getLocation(): Point
+    public function getPoint(): Point
     {
-        $stmt = App::$m->db->prepare('SELECT * FROM points WHERE id = ?');
-        $stmt->execute([$this->point_id]);
-
-        /** @var Point $point */
-        $point = $stmt->fetchObject(Point::class);
-
-        if (!$point) {
-            throw new \DomainException('Юзер нигде не стоит');
+        try {
+            $this->point = Point::findById($this->point_id);
+        } catch (\Throwable $e) {
+            throw new \DomainException('Юзер нигде не стоит', previous: $e);
         }
 
-        return  $point;
+        return $this->point;
     }
 
-    public function setLocation(int $x, int $y): static
+    /**
+     * @throws PointNotFoundException
+     */
+    public function moveToPointId(int $pointId): static
     {
         // Проверка на существование такой точки
-        $stmt = App::$m->db->prepare('SELECT * FROM points WHERE x = ? AND y = ?');
-        $stmt->execute([$x, $y]);
-        $point = $stmt->fetchObject(Point::class);
+        $point = Point::findById($pointId);
 
-        if (!$point) {
-            throw new PointNotFoundException('Несуществующие координаты');
-        }
-
+        // todo потом подумаю куда это вынести. Щас похер
         if ($point->active === 0) {
             throw new \DomainException('На эту точку наступать нельзя');
         }
 
+        return $this->setPoint($point);
+    }
+
+    /**
+     * @throws PointNotFoundException
+     */
+    public function moveToPointCoords(int $x, int $y): static
+    {
+        $point = Point::findByCoords($x, $y);
+
+        // todo
+        if ($point->active === 0) {
+            throw new \DomainException('На эту точку наступать нельзя');
+        }
+
+        return $this->setPoint($point);
+    }
+
+    private function setPoint(Point $point): static
+    {
         $stmt = App::$m->db->prepare('UPDATE users SET point_id = ? WHERE id = ?');
 
         if (!$stmt->execute([$point->id, $this->id])) {
             throw new \DomainException('Не получилось установить новую локацию юзера');
         }
+
+        $this->point = $point;
 
         return $this;
     }

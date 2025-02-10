@@ -10,7 +10,7 @@ class Test
         $user = User::findById(1);
 
         try {
-            $user->setLocation(30, 40);
+            $user->moveToPointId(5);
         } catch (PointNotFoundException $e) {
             echo $e->getMessage() . PHP_EOL;
             exit();
