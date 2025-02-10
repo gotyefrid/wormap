@@ -21,7 +21,11 @@
 
             let currentX = null; // Для отслеживания смены ряда
 
-            data.forEach((item) => {
+            // Определяем центральную точку
+            let size = Math.sqrt(data.length); // Предполагаем, что поле квадратное (3x3, 5x5 и т.д.)
+            let centerIndex = Math.floor(data.length / 2); // Индекс центрального элемента
+
+            data.forEach((item, index) => {
                 // Если x изменился, создаем новый ряд
                 if (currentX !== item.x) {
                     currentX = item.x;
@@ -30,6 +34,11 @@
 
                 // Определяем класс стиля в зависимости от "active"
                 let buttonClass = item.active ? 'btn active' : 'btn inactive';
+
+                // Если элемент центральный, добавляем класс "me-point"
+                if (index === centerIndex) {
+                    buttonClass += ' me-point';
+                }
 
                 // Создаем кнопку с data-атрибутами
                 let button = $(`<button class="${buttonClass}" data-x="${item.x}" data-y="${item.y}">${item.x}-${item.y}</button>`);
@@ -60,7 +69,7 @@
             $.ajax({
                 url: '/set-location',
                 method: 'POST',
-                data: {x: x, y: y},
+                data: { x: x, y: y },
                 success: function (data) {
                     renderField(data);
                 }
@@ -74,12 +83,12 @@
     .buttons-container {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 5px;
     }
 
     .row {
         display: flex;
-        gap: 10px;
+        gap: 5px;
     }
 
     .btn {
@@ -100,8 +109,15 @@
     .btn.inactive {
         background-color: #ccc; /* Серый цвет */
         color: #666;
-        cursor: not-allowed; /* Убираем возможность клика */
+        cursor: not-allowed;
     }
+
+    /* Центральная кнопка (позиция пользователя) */
+    .btn.me-point {
+        border: 2px solid blue;
+        font-weight: bold;
+    }
+
 </style>
 </body>
 </html>
