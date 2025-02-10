@@ -11,7 +11,7 @@ class Map
     {
     }
 
-    public function get($size = 11): array
+    public function get($size = 17): array
     {
         if ($size < 1 || ($size % 2) === 0) {
             throw new \DomainException('Невалидный размер карты. Только 3-5-7');

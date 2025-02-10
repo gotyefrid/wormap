@@ -33,37 +33,33 @@ try {
     $pdo->exec("INSERT INTO users (username, password, point_id) VALUES 
         ('test_user', 'test_password', NULL)");
 
-    // Вставка 5 тестовых точек
-    $pdo->exec("INSERT INTO points (x, y, active) VALUES 
-        (1, 1, 1),
-        (1, 2, 1),
-        (1, 3, 1),
-        (1, 4, 1),
-        (1, 5, 1),
-        (2, 1, 1),
-        (2, 2, 1),
-        (2, 3, 1),
-        (2, 4, 1),
-        (2, 5, 1),
-        (3, 1, 1),
-        (3, 2, 1),
-        (3, 3, 1),
-        (3, 4, 1),
-        (3, 5, 1),
-        (4, 1, 1),
-        (4, 2, 1),
-        (4, 3, 1),
-        (4, 4, 1),
-        (4, 5, 1),
-        (5, 1, 1),
-        (5, 2, 1),
-        (5, 3, 1),
-        (5, 4, 1),
-        (5, 5, 1)
-        ");
+    // Вставка тестовых точек
+    generateGrid($pdo, 10);
+
 
     echo "Тестовые данные успешно добавлены!";
 } catch (PDOException $e) {
     echo "Ошибка при вставке данных: " . $e->getMessage();
 }
 
+function generateGrid($pdo, $size = 5) {
+    if ($size < 1) {
+        throw new \DomainException('Размер карты должен быть больше 0');
+    }
+
+    $values = [];
+
+    for ($x = 1; $x <= $size; $x++) {
+        for ($y = 1; $y <= $size; $y++) {
+            $values[] = "($x, $y, 1)";
+        }
+    }
+
+    // Склеиваем все значения в одну строку
+    $sql = "INSERT INTO points (x, y, active) VALUES " . implode(',', $values);
+
+    // Выполняем SQL-запрос
+    $pdo->exec($sql);
+
+    echo "Сетка {$size}×{$size} успешно сгенерирована!";
+}
