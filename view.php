@@ -15,9 +15,9 @@
             // Сортируем массив сначала по x, потом по y
             data.sort((a, b) => (a.x - b.x) || (a.y - b.y));
 
-            // Контейнер для кнопок
-            $(document).find('.buttons-container').remove();
-            let container = $('<div class="buttons-container"></div>');
+            // Контейнер для изображений
+            $(document).find('.tiles-container').remove();
+            let container = $('<div class="tiles-container"></div>');
 
             let currentX = null; // Для отслеживания смены ряда
 
@@ -33,18 +33,28 @@
                 }
 
                 // Определяем класс стиля в зависимости от "active"
-                let buttonClass = item.active ? 'btn active' : 'btn inactive';
+                let tileClass = item.active ? 'tile active' : 'tile inactive';
 
                 // Если элемент центральный, добавляем класс "me-point"
                 if (index === centerIndex) {
-                    buttonClass += ' me-point';
+                    tileClass += ' me-point';
                 }
 
-                // Создаем кнопку с data-атрибутами
-                let button = $(`<button class="${buttonClass}" data-x="${item.x}" data-y="${item.y}">${item.x}-${item.y}</button>`);
+                let imageSrc = `output_tiles/tile_${item.x}_${item.y}.png`;
+                let img = new Image();
+                img.src = item.fictive ? 'output_tiles/default.png' : imageSrc;
+                img.onerror = function () {
+                    this.onerror = null;
+                    this.src = 'output_tiles/default.png';
+                };
+                let imageElement = $(img).addClass(tileClass).attr({
+                    'data-x': item.x,
+                    'data-y': item.y,
+                    'alt': `Tile ${item.x}-${item.y}`
+                });
 
-                // Добавляем кнопку в последний созданный ряд
-                container.find('.row:last').append(button);
+                // Добавляем изображение в последний созданный ряд
+                container.find('.row:last').append(imageElement);
             });
 
             // Добавляем контейнер в тело страницы (или нужный div)
@@ -59,8 +69,8 @@
             },
         });
 
-        // Обработчик клика на кнопки
-        $(document).on('click', '.btn.active', function (e) { // Только активные кнопки
+        // Обработчик клика на изображения
+        $(document).on('click', '.tile.active', function (e) { // Только активные изображения
             e.preventDefault();
 
             let x = $(this).data('x'); // Получаем x из data-атрибутов
@@ -76,48 +86,26 @@
             });
         });
     });
-
 </script>
 
 <style>
-    .buttons-container {
+    .tiles-container {
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 1px;
     }
 
     .row {
         display: flex;
-        gap: 5px;
-    }
-
-    .btn {
-        padding: 10px;
-        border: 1px solid #333;
-        cursor: pointer;
-        min-width: 50px;
-        text-align: center;
-    }
-
-    /* Активные кнопки */
-    .btn.active {
-        background-color: #4CAF50; /* Зеленый цвет */
-        color: white;
-    }
-
-    /* Неактивные кнопки */
-    .btn.inactive {
-        background-color: #ccc; /* Серый цвет */
-        color: #666;
-        cursor: not-allowed;
+        gap: 1px;
     }
 
     /* Центральная кнопка (позиция пользователя) */
-    .btn.me-point {
+    img.me-point {
         border: 2px solid blue;
         font-weight: bold;
     }
-
 </style>
+
 </body>
 </html>

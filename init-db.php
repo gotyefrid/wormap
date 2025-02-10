@@ -34,7 +34,7 @@ try {
         ('test_user', 'test_password', NULL)");
 
     // Вставка тестовых точек
-    generateGrid($pdo, 10);
+    generateGrid($pdo, 9);
 
 
     echo "Тестовые данные успешно добавлены!";

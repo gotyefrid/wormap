@@ -17,7 +17,7 @@ class Map
      * @return array
      * @throws PointNotFoundException
      */
-    public function get(int $size = 17): array
+    public function get(int $size = 5): array
     {
         if ($size < 1 || ($size % 2) === 0) {
             throw new \DomainException('Невалидный размер карты. Только 3-5-7');
@@ -85,7 +85,8 @@ class Map
                     $result[] = [
                         'x' => $x,
                         'y' => $y,
-                        'active' => 0 // Точка не существует в БД
+                        'active' => 0, // Точка не существует в БД
+                        'fictive' => 1, // Для фронта флаг, что нужно подставить заглушку
                     ];
                 }
             }
