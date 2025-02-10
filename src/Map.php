@@ -31,20 +31,41 @@ class Map
 
         $result = [];
 
+        // Рассчитываем границы диапазона
+        $minX = $centerX - $offset;
+        $maxX = $centerX + $offset;
+        $minY = $centerY - $offset;
+        $maxY = $centerY + $offset;
+
         // ОДИН ЗАПРОС: получаем все точки в пределах интересующего диапазона
-        $stmt = App::$m->db->prepare('SELECT * FROM points WHERE x BETWEEN ? AND ? AND y BETWEEN ? AND ?');
-        $stmt->execute([$centerX - $offset, $centerX + $offset, $centerY - $offset, $centerY + $offset]);
+        $query = '
+            SELECT *
+            FROM points
+            WHERE x BETWEEN :minX AND :maxX
+            AND y BETWEEN :minY AND :maxY
+        ';
+        $stmt = App::$m->db->prepare($query);
+
+        // Выполняем запрос с заранее рассчитанными параметрами
+        $stmt->execute([
+            ':minX' => $minX,
+            ':maxX' => $maxX,
+            ':minY' => $minY,
+            ':maxY' => $maxY
+        ]);
+
         $points = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Создаем удобный для поиска ассоциативный массив [x_y] => данные точки
         $pointsMap = [];
+
         foreach ($points as $point) {
             $pointsMap["{$point['x']}_{$point['y']}"] = $point;
         }
 
         // Генерируем результирующий массив с проверкой наличия точки в БД
-        for ($x = $centerX - $offset; $x <= $centerX + $offset; $x++) {
-            for ($y = $centerY - $offset; $y <= $centerY + $offset; $y++) {
+        for ($x = $minX; $x <= $maxX; $x++) {
+            for ($y = $minY; $y <= $maxY; $y++) {
                 $key = "{$x}_{$y}";
 
                 if (isset($pointsMap[$key])) {
