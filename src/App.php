@@ -4,13 +4,12 @@ declare(strict_types=1);
 namespace WorMap;
 
 use PDO;
-use function PHPUnit\Framework\exactly;
 
 class App
 {
     public static App $m;
 
-    public $db = null;
+    public PDO $db;
 
     public function __construct()
     {
@@ -20,6 +19,11 @@ class App
         $this::$m = $this;
     }
 
+    /**
+     * @return void
+     * @throws PointNotFoundException
+     * @throws \HttpInvalidParamException
+     */
     public function run(): void
     {
         $user = User::findById(1);
@@ -37,6 +41,11 @@ class App
         }
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     */
     private function asJson(mixed $value): void
     {
         header('Content-Type: application/json');

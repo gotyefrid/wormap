@@ -10,6 +10,12 @@ class Point
     public int $y;
     public int $active;
 
+    /**
+     * @param int $id
+     *
+     * @return Point
+     * @throws PointNotFoundException
+     */
     public static function findById(int $id): Point
     {
         $stmt = App::$m->db->prepare('SELECT * FROM points WHERE id = ?');
@@ -25,6 +31,13 @@ class Point
         return $point;
     }
 
+    /**
+     * @param int $x
+     * @param int $y
+     *
+     * @return static
+     * @throws PointNotFoundException
+     */
     public static function findByCoords(int $x, int $y): static
     {
         // Проверка на существование такой точки
