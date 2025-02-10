@@ -28,15 +28,13 @@ class User
         return $user;
     }
 
-    public function getPoint(): Point
+    public function getPoint(): ?Point
     {
         try {
-            $this->point = Point::findById($this->point_id);
-        } catch (\Throwable $e) {
-            throw new \DomainException('Юзер нигде не стоит', previous: $e);
+            return $this->point = Point::findById($this->point_id);
+        } catch (\Throwable) {
+            return $this->point = null;
         }
-
-        return $this->point;
     }
 
     /**
@@ -79,6 +77,7 @@ class User
         }
 
         $this->point = $point;
+        $this->point_id = $point->id;
 
         return $this;
     }
