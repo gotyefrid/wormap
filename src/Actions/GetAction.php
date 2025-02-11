@@ -34,7 +34,7 @@ final readonly class GetAction extends AbstractAction
         } catch (\Throwable $e) {
             return new JsonResponse([
                 'errors' => [$e->getMessage()],
-            ]);
+            ], 500);
         }
     }
 }

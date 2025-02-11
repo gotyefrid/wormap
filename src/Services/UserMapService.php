@@ -33,7 +33,7 @@ final readonly class UserMapService
     public function get(int $mapSize = 5): array
     {
         if ($mapSize < 1 || ($mapSize % 2) === 0) {
-            throw new \InvalidArgumentException('Невалидный размер карты. Только 3-5-7');
+            throw new \InvalidArgumentException('Невалидный размер карты. Только 3-5-7', 400);
         }
 
         try {
@@ -143,7 +143,7 @@ final readonly class UserMapService
 
         // todo потом подумаю куда это вынести. Щас похер
         if ($point->active === 0) {
-            throw new InvalidPointException('На эту точку наступать нельзя');
+            throw new InvalidPointException('На эту точку наступать нельзя', 400);
         }
 
         return $this->setPoint($point);
@@ -162,7 +162,7 @@ final readonly class UserMapService
 
         // todo
         if ($point->active === 0) {
-            throw new InvalidPointException('На эту точку наступать нельзя');
+            throw new InvalidPointException('На эту точку наступать нельзя', 400);
         }
 
         $this->setPoint($point);

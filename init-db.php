@@ -42,7 +42,7 @@ try {
 
 function generateGrid($pdo, $size = 5) {
     if ($size < 1) {
-        throw new \DomainException('Размер карты должен быть больше 0');
+        throw new \DomainException('Размер карты должен быть больше 0', 500);
     }
 
     $values = [];
