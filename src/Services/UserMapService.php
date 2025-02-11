@@ -89,28 +89,23 @@ readonly class UserMapService
             $pointsMap["{$point['x']}_{$point['y']}"] = $point;
         }
 
-        // Генерируем результирующий массив с проверкой доступности перемещения
+        // Генерируем результирующий массив с проверкой наличия точки в БД
         for ($x = $minX; $x <= $maxX; $x++) {
             for ($y = $minY; $y <= $maxY; $y++) {
                 $key = "{$x}_{$y}";
-                $dx = abs($centerX - $x);
-                $dy = abs($centerY - $y);
-
-                // Разрешаем перемещение только на соседние клетки (по вертикали, горизонтали или диагонали)
-                $canMove = $dx <= 1 && $dy <= 1;
 
                 if (isset($pointsMap[$key])) {
                     $point = $pointsMap[$key];
                     $result[] = [
                         'x' => $point['x'],
                         'y' => $point['y'],
-                        'active' => $canMove ? $point['active'] : 0
+                        'active' => $point['active']
                     ];
                 } else {
                     $result[] = [
                         'x' => $x,
                         'y' => $y,
-                        'active' => 0, // Точка не существует в БД или вне зоны перемещения
+                        'active' => 0, // Точка не существует в БД
                         'fictive' => 1, // Для фронта флаг, что нужно подставить заглушку
                     ];
                 }
@@ -135,17 +130,8 @@ readonly class UserMapService
     public function moveUser(int $x, int $y): void
     {
         if ($this->user->point_id === null) {
-            $this->moveToPointCoords(1, 1);
-        }
-
-        $currentPoint = $this->pointService->findById($this->user->point_id);
-
-        $dx = abs($currentPoint->x - $x);
-        $dy = abs($currentPoint->y - $y);
-
-        // Разрешаем перемещение только на соседние клетки (по вертикали, горизонтали или диагонали)
-        if ($dx > 1 || $dy > 1) {
-            throw new InvalidPointException('Можно перемещаться только на соседние клетки (по вертикали, горизонтали или диагонали)');
+            $this->moveToPointCoords($x, $y);
+            return;
         }
 
         $this->moveToPointCoords($x, $y);
