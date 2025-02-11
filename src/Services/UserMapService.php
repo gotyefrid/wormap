@@ -128,6 +128,10 @@ readonly class UserMapService
      */
     public function moveUser(int $x, int $y): void
     {
+        if ($this->user->point_id === null) {
+            throw new NotFoundException('Пользователь не имеет начальной точки');
+        }
+
         $this->moveToPointCoords($x, $y);
     }
 
