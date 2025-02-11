@@ -79,7 +79,7 @@
             $.ajax({
                 url: '/set-location',
                 method: 'POST',
-                data: { x: x, y: y },
+                data: {x: x, y: y},
                 success: function (data) {
                     renderField(data);
                 }
@@ -102,8 +102,8 @@
 
     /* Центральная кнопка (позиция пользователя) */
     img.me-point {
-        border: 2px solid blue;
-        font-weight: bold;
+        outline: 4px solid blue;
+        outline-offset: -2px;
     }
 </style>
 
