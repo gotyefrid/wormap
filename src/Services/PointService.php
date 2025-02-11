@@ -9,7 +9,7 @@ use WorMap\Models\Point;
 /**
  * Сервис по работе с картой пользователя
  */
-final readonly class PointService
+readonly class PointService
 {
     public function __construct(private \PDO $db)
     {

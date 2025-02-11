@@ -9,7 +9,7 @@ use WorMap\Models\User;
 /**
  * Сервис по работе с картой пользователя
  */
-final readonly class UserService
+readonly class UserService
 {
     public function __construct(private \PDO $db)
     {

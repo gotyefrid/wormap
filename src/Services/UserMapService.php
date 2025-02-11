@@ -12,7 +12,7 @@ use WorMap\Models\User;
 /**
  * Сервис по работе с картой пользователя
  */
-final readonly class UserMapService
+readonly class UserMapService
 {
     public const int DEFAULT_MAP_SIZE = 3;
 
