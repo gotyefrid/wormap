@@ -12,6 +12,7 @@ RUN apk update && apk add --no-cache \
     freetype-dev \
     libjpeg-turbo-dev \
     libpng-dev \
+    shadow \
     $PHPIZE_DEPS
 
 # Скачиваем и устанавливаем скрипт для установки расширений PHP
@@ -36,4 +37,16 @@ RUN pecl install xdebug-3.3.1 && \
 # Копируем конфигурацию XDebug
 COPY xdebug.ini /usr/local/etc/php/conf.d
 
-WORKDIR /var/www/app/
+# Создаем пользователя и группу с переданными UID/GID
+ARG USER_ID
+ARG GROUP_ID
+
+RUN addgroup -g $GROUP_ID appgroup && \
+    adduser -D -u $USER_ID -G appgroup appuser
+
+# Даем владельцу права на директорию проекта
+WORKDIR /var/www/app
+RUN chown -R appuser:appgroup /var/www/app
+
+# Устанавливаем пользователя по умолчанию
+USER appuser

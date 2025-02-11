@@ -3,7 +3,6 @@
 // Подключение к базе данных SQLite
 $path = __DIR__ . '/src/database.db';
 $pdo = new PDO('sqlite:' . $path);
-chmod($path, 777);
 
 try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

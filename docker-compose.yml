@@ -20,7 +20,12 @@ services:
     php:
         build:
             context: docker/php
+            args:
+                USER_ID: ${USER_ID}
+                GROUP_ID: ${GROUP_ID}
         container_name: wormap-api-php
+        env_file:
+            - .env
         volumes:
             - ./:/var/www/app
         extra_hosts:
