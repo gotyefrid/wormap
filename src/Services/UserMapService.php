@@ -14,6 +14,8 @@ use WorMap\Models\User;
  */
 final readonly class UserMapService
 {
+    public const int DEFAULT_MAP_SIZE = 3;
+
     public function __construct(
         private User $user,
         private PointService $pointService,
@@ -30,7 +32,7 @@ final readonly class UserMapService
      * @throws InvalidPointException
      * @throws NotFoundException
      */
-    public function get(int $mapSize = 5): array
+    public function get(int $mapSize = self::DEFAULT_MAP_SIZE): array
     {
         if ($mapSize < 1 || ($mapSize % 2) === 0) {
             throw new \InvalidArgumentException('Невалидный размер карты. Только 3-5-7', 400);

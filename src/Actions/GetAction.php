@@ -10,7 +10,6 @@ use WorMap\Services\UserMapService;
 
 final readonly class GetAction extends AbstractAction
 {
-    public const int DEFAULT_MAP_SIZE = 3;
     private UserMapService $userMapService;
 
     public function __construct(
@@ -28,7 +27,7 @@ final readonly class GetAction extends AbstractAction
     public function handle(): ResponseInterface
     {
         try {
-            $mapArray = $this->userMapService->get(self::DEFAULT_MAP_SIZE);
+            $mapArray = $this->userMapService->get();
 
             return new JsonResponse($mapArray);
         } catch (\Throwable $e) {

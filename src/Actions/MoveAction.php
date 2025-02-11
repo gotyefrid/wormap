@@ -41,7 +41,7 @@ final readonly class MoveAction extends AbstractAction
         } catch (\Throwable $e) {
             return new JsonResponse([
                 'errors' => [$e->getMessage()],
-            ]);
+            ],  (int)$e->getCode() ?: 500);
         }
     }
 }
