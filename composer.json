@@ -18,6 +18,7 @@
     "scripts": {
         "up": "docker compose up -d",
         "down": "docker compose down",
-        "php": "docker exec -it wormap-api-php sh"
+        "php": "docker exec -it wormap-api-php sh",
+        "psalm": "./vendor/bin/psalm --no-cache"
     }
 }

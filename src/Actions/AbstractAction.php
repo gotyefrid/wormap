@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace WorMap\Actions;
 
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract readonly class AbstractAction
 {
-    public function __construct(public RequestInterface $request)
+    public function __construct(public ServerRequestInterface $request)
     {
     }
 

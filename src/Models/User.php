@@ -8,9 +8,12 @@ namespace WorMap\Models;
  */
 class User
 {
-    /** ID пользователя */
-    public int $id;
-
-    /** Ссылка на точку */
-    public ?int $point_id;
+    public function __construct(
+        /** ID пользователя */
+        public int $id,
+        /** Ссылка на точку */
+        public ?int $point_id,
+    )
+    {
+    }
 }

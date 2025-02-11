@@ -28,12 +28,30 @@ final readonly class UserService
         $stmt = $this->db->prepare('SELECT * FROM users WHERE id = ?');
         $stmt->execute([$id]);
 
-        $user = $stmt->fetchObject(User::class);
+        $userData = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!$user) {
+        if (is_bool($userData)) {
             throw new NotFoundException('Не нашли юзера');
         }
 
-        return $user;
+        /** @var array{id: int, point_id: int|null} $userData */
+        return $this->mapModel($userData);
+    }
+
+    /**
+     * @param array{id: int, point_id: ?int} $data
+     *
+     * @return User
+     * @throws NotFoundException
+     */
+    public function mapModel(array $data): User
+    {
+        $id = $data['id'] ?? throw new NotFoundException('Не найден id юзера в данных БД');
+        $pointId = $data['point_id'] ?? throw new NotFoundException('Не найден point_id юзера в данных БД');
+
+        return new User(
+            $id,
+            $pointId
+        );
     }
 }

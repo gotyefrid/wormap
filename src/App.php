@@ -8,7 +8,7 @@ use FastRoute\RouteCollector;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use PDO;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use WorMap\Actions\AbstractAction;
 use WorMap\Actions\GetAction;
 use WorMap\Actions\MethodNotAllowedAction;
@@ -26,7 +26,7 @@ class App
     public PDO $db;
 
     /** Запрос полученный от клиента */
-    public RequestInterface $request;
+    public ServerRequestInterface $request;
     private PointService $pointService;
     private UserService $userService;
     private UserMapService $userMapService;
@@ -36,14 +36,11 @@ class App
      */
     public function __construct(
         PDO $pdo = new PDO('sqlite:' . __DIR__ . '/database.db'),
-        ?RequestInterface $request = null,
+        ?ServerRequestInterface $request = null,
     )
     {
         $this->db = $pdo;
-
-        if (!$request) {
-            $this->request = ServerRequestFactory::fromGlobals();
-        }
+        $this->request = $request ?? ServerRequestFactory::fromGlobals();
 
         $this->userService = new UserService($this->db);
         $this->pointService = new PointService($this->db);

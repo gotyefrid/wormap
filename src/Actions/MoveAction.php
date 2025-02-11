@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace WorMap\Actions;
 
 use Laminas\Diactoros\Response\JsonResponse;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use WorMap\Services\UserMapService;
 
 final readonly class MoveAction extends AbstractAction
@@ -13,7 +13,7 @@ final readonly class MoveAction extends AbstractAction
     private UserMapService $userMapService;
 
     public function __construct(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         UserMapService $userMapService,
     )
     {
@@ -27,7 +27,7 @@ final readonly class MoveAction extends AbstractAction
             /** @var array $postData */
             $postData = $this->request->getParsedBody();
 
-            if (empty($postData['x'] || empty($postData['y']))) {
+            if (empty($postData['x']) || empty($postData['y'])) {
                 return new JsonResponse([
                     'errors' => ['Параметры x и y обязательны для заполнения'],
                 ], 422);

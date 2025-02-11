@@ -27,14 +27,14 @@ final readonly class PointService
     {
         $stmt = $this->db->prepare('SELECT * FROM points WHERE id = ?');
         $stmt->execute([$id]);
+        $point = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        $point = $stmt->fetchObject(Point::class);
-
-        if (!$point) {
+        if (is_bool($point)) {
             throw new NotFoundException('Точка по ID не найдена');
         }
 
-        return $point;
+        /** @var array{id: int, x: int, y: int, active: int} $point */
+        return $this->mapModel($point);
     }
 
     /**
@@ -50,12 +50,34 @@ final readonly class PointService
     {
         $stmt = $this->db->prepare('SELECT * FROM points WHERE x = ? AND y = ?');
         $stmt->execute([$x, $y]);
-        $point = $stmt->fetchObject(Point::class);
+        $point = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!$point) {
-            throw new NotFoundException('Несуществующие координаты. Точка не найдена');
+        if (is_bool($point)) {
+            throw new NotFoundException('Не нашли точку по координатам');
         }
 
-        return $point;
+        /** @var array{id: int, x: int, y: int, active: int} $point */
+        return $this->mapModel($point);
+    }
+
+    /**
+     * @param array{id: int, x: int, y: int, active: int} $data
+     *
+     * @return Point
+     * @throws NotFoundException
+     */
+    public function mapModel(array $data): Point
+    {
+        $id = $data['id'] ?? throw new NotFoundException('Не найден id юзера в данных БД');
+        $x = $data['x'] ?? throw new NotFoundException('Не найден x юзера в данных БД');
+        $y = $data['y'] ?? throw new NotFoundException('Не найден y юзера в данных БД');
+        $active = $data['active'] ?? throw new NotFoundException('Не найден active юзера в данных БД');
+
+        return new Point(
+            $id,
+            $x,
+            $y,
+            $active,
+        );
     }
 }

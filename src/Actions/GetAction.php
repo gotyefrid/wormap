@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace WorMap\Actions;
 
 use Laminas\Diactoros\Response\JsonResponse;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use WorMap\Services\UserMapService;
 
 final readonly class GetAction extends AbstractAction
@@ -13,7 +13,7 @@ final readonly class GetAction extends AbstractAction
     private UserMapService $userMapService;
 
     public function __construct(
-        RequestInterface $request,
+        ServerRequestInterface $request,
         UserMapService $userMapService,
     )
     {

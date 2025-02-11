@@ -8,15 +8,16 @@ namespace WorMap\Models;
  */
 class Point
 {
-    /** ID точки  */
-    public int $id;
-
-    /** Координата X  */
-    public int $x;
-
-    /** Координата Y  */
-    public int $y;
-
-    /** Статус точки  */
-    public int $active;
+    public function __construct(
+        /** ID точки  */
+        public int $id,
+        /** Координата X  */
+        public int $x,
+        /** Координата Y  */
+        public int $y,
+        /** Статус точки  */
+        public int $active = 0
+    )
+    {
+    }
 }
