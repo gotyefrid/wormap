@@ -25,7 +25,7 @@ final readonly class UserMapService
     /**
      * @param int $mapSize
      *
-     * @return array<int, array{x: int, y: int, active: int, fictive?: int}>
+     * @return list<array{active: null|scalar, fictive?: 1, x: null|scalar, y: null|scalar}>
      * @throws DatabaseException
      * @throws InvalidPointException
      * @throws NotFoundException
@@ -37,7 +37,11 @@ final readonly class UserMapService
         }
 
         try {
-            $currentPoint = $this->pointService->findById($this->user->point_id);
+            if ($this->user->point_id !== null) {
+                $currentPoint = $this->pointService->findById($this->user->point_id);
+            } else {
+                throw new NotFoundException();
+            }
         } catch (NotFoundException) {
             // Если у пользователя нет точки, перемещаем его в (1,1)
             $currentPoint = $this->moveToPointCoords(1, 1);

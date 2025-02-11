@@ -9,8 +9,6 @@ try {
     // Создание таблицы users
     $pdo->exec("CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
         point_id INTEGER
     )");
 
@@ -30,8 +28,8 @@ try {
 
 try {
     // Вставка тестового пользователя
-    $pdo->exec("INSERT INTO users (username, password, point_id) VALUES 
-        ('test_user', 'test_password', NULL)");
+    $pdo->exec("INSERT INTO users (point_id) VALUES 
+        (NULL)");
 
     // Вставка тестовых точек
     generateGrid($pdo, 9);

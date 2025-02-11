@@ -24,6 +24,7 @@ final readonly class MoveAction extends AbstractAction
     public function handle(): ResponseInterface
     {
         try {
+            /** @var array $postData */
             $postData = $this->request->getParsedBody();
 
             if (empty($postData['x'] || empty($postData['y']))) {
