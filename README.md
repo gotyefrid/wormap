@@ -13,6 +13,10 @@
 git clone https://github.com/your-repo/wormap.git
 cd wormap
 ```
+Возможно нужно перейти на ветку dev сначала
+```bash
+git checkout dev
+```
 
 ### **2️⃣ Создание `.env` файла**
 В корне проекта есть файл `.env.example`. Скопируйте его и назовите `.env`:
