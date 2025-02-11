@@ -19,6 +19,7 @@
         "up": "docker compose up -d",
         "down": "docker compose down",
         "php": "docker exec -it wormap-api-php sh",
-        "psalm": "./vendor/bin/psalm --no-cache"
+        "psalm": "./vendor/bin/psalm --no-cache",
+        "test": "./vendor/bin/phpunit"
     }
 }

@@ -47,7 +47,7 @@ readonly class UserService
     public function mapModel(array $data): User
     {
         $id = $data['id'] ?? throw new NotFoundException('Не найден id юзера в данных БД');
-        $pointId = $data['point_id'] ?? throw new NotFoundException('Не найден point_id юзера в данных БД');
+        $pointId = $data['point_id'] ?? null;
 
         return new User(
             $id,
