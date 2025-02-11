@@ -2,3 +2,4 @@
 src/database.db
 vendor
 .phpunit.result.cache
+.env

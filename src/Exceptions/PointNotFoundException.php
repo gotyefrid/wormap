@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace WorMap;
+namespace WorMap\Exceptions;
 
 class PointNotFoundException extends \Exception
 {

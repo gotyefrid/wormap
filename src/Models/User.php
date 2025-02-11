@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace WorMap;
+namespace WorMap\Models;
+
+use WorMap\App;
+use WorMap\Exceptions\PointNotFoundException;
 
 class User
 {

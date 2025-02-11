@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace WorMap;
+namespace WorMap\Models;
 
 use PDO;
+use WorMap\App;
+use WorMap\Exceptions\PointNotFoundException;
 
 class Map
 {

@@ -3,54 +3,79 @@ declare(strict_types=1);
 
 namespace WorMap;
 
+use FastRoute\Dispatcher;
+use FastRoute\RouteCollector;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use PDO;
+use Psr\Http\Message\RequestInterface;
+use WorMap\Actions\AbstractAction;
+use WorMap\Actions\GetAction;
+use WorMap\Actions\MethodNotAllowedAction;
+use WorMap\Actions\MoveAction;
+use WorMap\Actions\NotFoundAction;
+use function FastRoute\simpleDispatcher;
 
 class App
 {
+    /** Модули приложения (простейший ServiceLocator) */
     public static App $m;
 
-    public PDO $db;
+    /** База данных */
+    public PDO $pdo;
 
-    public function __construct()
+    /** Запрос полученный от клиента */
+    public RequestInterface $request;
+
+    public function __construct(
+        PDO $pdo = new PDO('sqlite:' . __DIR__ . '/database.db'),
+        ?RequestInterface $request = null,
+    )
     {
-        $pdo = new PDO('sqlite:' . __DIR__ . '/database.db');
-        $this->db = $pdo;
+        $this->pdo = $pdo;
+
+        if (!$request) {
+            $this->request = ServerRequestFactory::fromGlobals();
+        }
 
         $this::$m = $this;
     }
 
-    /**
-     * @return void
-     * @throws PointNotFoundException
-     * @throws \HttpInvalidParamException
-     */
     public function run(): void
     {
-        $user = User::findById(1);
-        $map = new Map($user);
+        $action = $this->getAction();
 
-        if ($_SERVER['REQUEST_URI'] === '/get' ) {
-            $this->asJson($map->get());
-        } elseif ($_SERVER['REQUEST_URI'] === '/set-location') {
-            if (!empty($_POST['x']) && !empty($_POST['y'])) {
-                $map->setLocation((int)$_POST['x'], (int)$_POST['y']);
-                $this->asJson($map->get());
-            }
+        $response = $action();
 
-            throw new \HttpInvalidParamException('Не переданы необходимы параметры');
-        }
+        $emitter = new SapiEmitter();
+        $emitter->emit($response);
     }
 
     /**
-     * @param mixed $value
+     * Получить результат маршрутизации
      *
-     * @return void
+     * @return AbstractAction
      */
-    private function asJson(mixed $value): void
+    private function getAction(): AbstractAction
     {
-        header('Content-Type: application/json');
+        $dispatcher = simpleDispatcher(function(RouteCollector $r) {
+            $r->addRoute('GET', '/get', new GetAction($this->request));
+            $r->addRoute('POST', '/move', new MoveAction($this->request));
+        });
 
-        echo json_encode($value);
-        exit();
+        $httpMethod = $this->request->getMethod();
+        $uri = $this->request->getUri()->getPath();
+        $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+
+        return match ($routeInfo[0]) {
+            Dispatcher::NOT_FOUND => new NotFoundAction($this->request),
+            Dispatcher::METHOD_NOT_ALLOWED => new MethodNotAllowedAction($this->request),
+            Dispatcher::FOUND => (static function () use ($routeInfo) {
+                // todo проверка авторизации
+
+                /** @var AbstractAction */
+                return $routeInfo[1];
+            })(),
+        };
     }
 }
