@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace WorMap\Exceptions;
 
-class PointNotFoundException extends \Exception
+class DatabaseException extends \Exception
 {
 }

@@ -14,31 +14,44 @@ use WorMap\Actions\GetAction;
 use WorMap\Actions\MethodNotAllowedAction;
 use WorMap\Actions\MoveAction;
 use WorMap\Actions\NotFoundAction;
+use WorMap\Exceptions\NotFoundException;
+use WorMap\Services\PointService;
+use WorMap\Services\UserMapService;
+use WorMap\Services\UserService;
 use function FastRoute\simpleDispatcher;
 
 class App
 {
-    /** Модули приложения (простейший ServiceLocator) */
-    public static App $m;
-
     /** База данных */
-    public PDO $pdo;
+    public PDO $db;
 
     /** Запрос полученный от клиента */
     public RequestInterface $request;
+    private PointService $pointService;
+    private UserService $userService;
+    private UserMapService $userMapService;
 
+    /**
+     * @throws NotFoundException
+     */
     public function __construct(
         PDO $pdo = new PDO('sqlite:' . __DIR__ . '/database.db'),
         ?RequestInterface $request = null,
     )
     {
-        $this->pdo = $pdo;
+        $this->db = $pdo;
 
         if (!$request) {
             $this->request = ServerRequestFactory::fromGlobals();
         }
 
-        $this::$m = $this;
+        $this->userService = new UserService($this->db);
+        $this->pointService = new PointService($this->db);
+        $this->userMapService = new UserMapService(
+            $this->userService->findById(1),
+            $this->pointService,
+            $this->db
+        );
     }
 
     public function run(): void
@@ -58,9 +71,17 @@ class App
      */
     private function getAction(): AbstractAction
     {
-        $dispatcher = simpleDispatcher(function(RouteCollector $r) {
-            $r->addRoute('GET', '/get', new GetAction($this->request));
-            $r->addRoute('POST', '/move', new MoveAction($this->request));
+        $dispatcher = simpleDispatcher(function (RouteCollector $r) {
+            $r->addRoute(
+                'GET',
+                '/get',
+                new GetAction($this->request, $this->userMapService)
+            );
+            $r->addRoute(
+                'POST',
+                '/move',
+                new MoveAction($this->request, $this->userMapService)
+            );
         });
 
         $httpMethod = $this->request->getMethod();

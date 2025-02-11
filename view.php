@@ -77,7 +77,7 @@
             let y = $(this).data('y'); // Получаем y из data-атрибутов
 
             $.ajax({
-                url: '/set-location',
+                url: '/move',
                 method: 'POST',
                 data: {x: x, y: y},
                 success: function (data) {
