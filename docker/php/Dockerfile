@@ -9,6 +9,9 @@ RUN apk update && apk add --no-cache \
     linux-headers \
     sqlite \
     sqlite-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
     $PHPIZE_DEPS
 
 # Скачиваем и устанавливаем скрипт для установки расширений PHP
@@ -23,7 +26,8 @@ RUN install-php-extensions \
     dom \
     xml \
     xmlwriter \
-    sqlite3 pdo_sqlite
+    sqlite3 pdo_sqlite \
+    gd
 
 # Устанавливаем XDebug
 RUN pecl install xdebug-3.3.1 && \
