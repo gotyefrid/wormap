@@ -34,9 +34,6 @@ RUN install-php-extensions \
 RUN pecl install xdebug-3.3.1 && \
     docker-php-ext-enable xdebug
 
-# Копируем конфигурацию XDebug
-COPY xdebug.ini /usr/local/etc/php/conf.d
-
 # Создаем пользователя и группу с переданными UID/GID
 ARG USER_ID
 ARG GROUP_ID
