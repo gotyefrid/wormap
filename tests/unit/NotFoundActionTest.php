@@ -1,0 +1,26 @@
+<?php
+declare(strict_types=1);
+
+namespace unit;
+
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\ServerRequest;
+use PHPUnit\Framework\TestCase;
+use WorMap\Actions\NotFoundAction;
+
+class NotFoundActionTest extends TestCase
+{
+    public function testHandle(): void
+    {
+        $action = new NotFoundAction(new ServerRequest());
+        $response = $action->handle();
+
+        static::assertInstanceOf(JsonResponse::class, $response);
+        static::assertSame(404, $response->getStatusCode());
+        static::assertIsArray($response->getPayload());
+        static::assertArrayHasKey('errors', $response->getPayload());
+        static::assertIsArray($response->getPayload()['errors']);
+        static::assertCount(1, $response->getPayload()['errors']);
+        static::assertSame('Page not found', $response->getPayload()['errors'][0]);
+    }
+}
