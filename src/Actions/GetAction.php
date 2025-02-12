@@ -6,6 +6,9 @@ namespace WorMap\Actions;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use WorMap\Exceptions\DatabaseException;
+use WorMap\Exceptions\InvalidPointException;
+use WorMap\Exceptions\NotFoundException;
 use WorMap\Services\UserMapService;
 
 final readonly class GetAction extends AbstractAction
@@ -23,17 +26,14 @@ final readonly class GetAction extends AbstractAction
 
     /**
      * @return ResponseInterface
+     * @throws DatabaseException
+     * @throws InvalidPointException
+     * @throws NotFoundException
      */
     public function handle(): ResponseInterface
     {
-        try {
-            $mapArray = $this->userMapService->get();
+        $mapArray = $this->userMapService->get();
 
-            return new JsonResponse($mapArray);
-        } catch (\Throwable $e) {
-            return new JsonResponse([
-                'errors' => [$e->getMessage()],
-            ], 500);
-        }
+        return new JsonResponse($mapArray);
     }
 }

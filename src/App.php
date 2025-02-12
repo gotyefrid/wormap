@@ -5,6 +5,7 @@ namespace WorMap;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use PDO;
@@ -53,12 +54,28 @@ class App
 
     public function run(): void
     {
-        $action = $this->getAction();
-
-        $response = $action();
-
         $emitter = new SapiEmitter();
-        $emitter->emit($response);
+
+        try {
+            $action = $this->getAction();
+
+            $response = $action();
+
+            $emitter->emit($response);
+        } catch (\Throwable $e) {
+            if (isset($_ENV['ENVIRONMENT']) && $_ENV['ENVIRONMENT'] === 'dev') {
+                $emitter->emit(new JsonResponse([
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTrace(),
+                ], 500));
+            } else {
+                $emitter->emit(new JsonResponse([
+                    'error' => 'Internal server error',
+                ], 500));
+            }
+        }
     }
 
     /**
