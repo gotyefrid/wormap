@@ -137,6 +137,14 @@ readonly class UserMapService
             return;
         }
 
+        // Получаем текущие координаты пользователя
+        $currentPoint = $this->pointService->findById($this->user->point_id);
+
+        // Проверяем, что целевая точка находится рядом с текущей
+        if (abs($currentPoint->x - $x) > 1 || abs($currentPoint->y - $y) > 1) {
+            throw new InvalidPointException('Можно перемещаться только на соседние клетки (по вертикали, горизонтали или диагонали)');
+        }
+
         // Ищем точку по координатам
         $point = $this->pointService->findByCoords($x, $y);
 
