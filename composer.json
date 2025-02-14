@@ -1,0 +1,25 @@
+{
+    "name": "vladislav-mel/wor-map",
+    "autoload": {
+        "psr-4": {
+            "WorMap\\": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11",
+        "vimeo/psalm": "6.4"
+    },
+    "require": {
+        "ext-pdo": "*",
+        "nikic/fast-route": "1.3.0",
+        "laminas/laminas-diactoros": "^3.5",
+        "laminas/laminas-httphandlerrunner": "^2.11"
+    },
+    "scripts": {
+        "up": "docker compose up -d",
+        "down": "docker compose down",
+        "php": "docker exec -it wormap-api-php sh",
+        "psalm": "./vendor/bin/psalm --no-cache",
+        "test": "./vendor/bin/phpunit --testdox"
+    }
+}
