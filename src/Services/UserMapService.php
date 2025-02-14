@@ -129,7 +129,6 @@ readonly class UserMapService
      * @throws InvalidPointException
      * @throws NotFoundException
      */
-
     public function moveUser(int $x, int $y): void
     {
         if ($this->user->point_id === null) {
@@ -143,14 +142,6 @@ readonly class UserMapService
         // Проверяем, что целевая точка находится рядом с текущей
         if (abs($currentPoint->x - $x) > 1 || abs($currentPoint->y - $y) > 1) {
             throw new InvalidPointException('Можно перемещаться только на соседние клетки (по вертикали, горизонтали или диагонали)');
-        }
-
-        // Ищем точку по координатам
-        $point = $this->pointService->findByCoords($x, $y);
-
-        // Проверяем, активна ли точка
-        if ($point->active === 0) {
-            throw new InvalidPointException('На эту точку наступать нельзя');
         }
 
         $this->moveToPointCoords($x, $y);
