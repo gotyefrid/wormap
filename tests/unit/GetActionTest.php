@@ -53,17 +53,10 @@ class GetActionTest extends TestCase
             ->method('get')
             ->willThrowException(new NotFoundException('Ошибка карты'));
 
+        $this->expectException(NotFoundException::class);
+
         $request = new ServerRequest();
         $action = new GetAction($request, $this->userMapService);
-        $response = $action->handle();
-
-        static::assertInstanceOf(ResponseInterface::class, $response);
-        static::assertEquals(500, $response->getStatusCode());
-
-        $body = json_decode((string) $response->getBody(), true);
-
-        static::assertIsArray($body);
-        static::assertArrayHasKey('errors', $body);
-        static::assertContains('Ошибка карты', $body['errors']);
+        $action->handle();
     }
 }

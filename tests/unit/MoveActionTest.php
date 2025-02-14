@@ -78,18 +78,11 @@ class MoveActionTest extends TestCase
             ->method('moveUser')
             ->willThrowException(new InvalidPointException('На эту точку наступать нельзя', 400));
 
+        $this->expectException(InvalidPointException::class);
+
         $request = (new ServerRequest())->withParsedBody(['x' => '2', 'y' => '2']);
         $action = new MoveAction($request, $this->userMapService);
-        $response = $action->handle();
-
-        static::assertInstanceOf(ResponseInterface::class, $response);
-        static::assertEquals(400, $response->getStatusCode());
-
-        $body = json_decode((string) $response->getBody(), true);
-
-        static::assertIsArray($body);
-        static::assertArrayHasKey('errors', $body);
-        static::assertContains('На эту точку наступать нельзя', $body['errors']);
+        $action->handle();
     }
 
     public function testHandleReturnsErrorOnNotFoundException(): void
@@ -98,17 +91,10 @@ class MoveActionTest extends TestCase
             ->method('moveUser')
             ->willThrowException(new NotFoundException('Точка не найдена'));
 
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Точка не найдена');
         $request = (new ServerRequest())->withParsedBody(['x' => '5', 'y' => '5']);
         $action = new MoveAction($request, $this->userMapService);
-        $response = $action->handle();
-
-        static::assertInstanceOf(ResponseInterface::class, $response);
-        static::assertEquals(400, $response->getStatusCode());
-
-        $body = json_decode((string) $response->getBody(), true);
-
-        static::assertIsArray($body);
-        static::assertArrayHasKey('errors', $body);
-        static::assertContains('Точка не найдена', $body['errors']);
+        $action->handle();
     }
 }
