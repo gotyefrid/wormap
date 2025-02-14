@@ -94,12 +94,14 @@ readonly class UserMapService
             for ($y = $minY; $y <= $maxY; $y++) {
                 $key = "{$x}_{$y}";
 
+                $distance = abs($x - $centerX) <= 1 && abs($y - $centerY) <= 1;
+
                 if (isset($pointsMap[$key])) {
                     $point = $pointsMap[$key];
                     $result[] = [
                         'x' => $point['x'],
                         'y' => $point['y'],
-                        'active' => $point['active']
+                        'active' => $distance ? 1 : 0,
                     ];
                 } else {
                     $result[] = [
@@ -132,6 +134,14 @@ readonly class UserMapService
         if ($this->user->point_id === null) {
             $this->moveToPointCoords($x, $y);
             return;
+        }
+
+        // Получаем текущие координаты пользователя
+        $currentPoint = $this->pointService->findById($this->user->point_id);
+
+        // Проверяем, что целевая точка находится рядом с текущей
+        if (abs($currentPoint->x - $x) > 1 || abs($currentPoint->y - $y) > 1) {
+            throw new InvalidPointException('Можно перемещаться только на соседние клетки (по вертикали, горизонтали или диагонали)');
         }
 
         $this->moveToPointCoords($x, $y);
