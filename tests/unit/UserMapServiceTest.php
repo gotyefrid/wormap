@@ -221,7 +221,10 @@ class UserMapServiceTest extends TestCase
         $mockPointService = $this->createMock(PointService::class);
         $mockPointService
             ->method('findById')
-            ->willReturn(new Point(1, 5, 5, 1));
+            ->willReturn(new Point(1, 1, 1, 1));
+
+        $mockPointService->method('findByCoords')
+            ->willReturn(new Point(1, 1, 1, 1));
 
         // Используем мок для тестирования
         $userMapService = new UserMapService($this->user, $mockPointService, $this->db);
