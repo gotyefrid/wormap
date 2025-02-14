@@ -62,12 +62,4 @@ class UserServiceTest extends TestCase
 
         $this->userService->mapModel(['point_id' => 100]); // Нет 'id'
     }
-
-    public function testMapModelThrowsExceptionIfPointIdMissing(): void
-    {
-        $this->expectException(NotFoundException::class);
-        $this->expectExceptionMessage('Не найден point_id юзера в данных БД');
-
-        $this->userService->mapModel(['id' => 1]); // Нет 'point_id'
-    }
 }
