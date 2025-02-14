@@ -94,12 +94,14 @@ readonly class UserMapService
             for ($y = $minY; $y <= $maxY; $y++) {
                 $key = "{$x}_{$y}";
 
+                $distance = abs($x - $centerX) <= 1 && abs($y - $centerY) <= 1;
+
                 if (isset($pointsMap[$key])) {
                     $point = $pointsMap[$key];
                     $result[] = [
                         'x' => $point['x'],
                         'y' => $point['y'],
-                        'active' => $point['active']
+                        'active' => $distance ? 1 : 0,
                     ];
                 } else {
                     $result[] = [
@@ -127,11 +129,20 @@ readonly class UserMapService
      * @throws InvalidPointException
      * @throws NotFoundException
      */
+
     public function moveUser(int $x, int $y): void
     {
         if ($this->user->point_id === null) {
             $this->moveToPointCoords($x, $y);
             return;
+        }
+
+        // Ищем точку по координатам
+        $point = $this->pointService->findByCoords($x, $y);
+
+        // Проверяем, активна ли точка
+        if ($point->active === 0) {
+            throw new InvalidPointException('На эту точку наступать нельзя');
         }
 
         $this->moveToPointCoords($x, $y);

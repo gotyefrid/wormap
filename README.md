@@ -10,7 +10,7 @@
 
 ### **1️⃣ Клонирование проекта**
 ```bash
-git clone https://github.com/your-repo/wormap.git
+git clone git@github.com:gotyefrid/wormap.git
 cd wormap
 ```
 Возможно нужно перейти на ветку dev сначала
